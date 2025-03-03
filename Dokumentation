@@ -1,0 +1,32 @@
+# Dokumentation: KY-037 Mikrofon med Raspberry Pi 3B+ och ThingSpeak
+
+## Projektbeskrivning
+Detta projekt använder en KY-037 ljudsensor kopplad till en Raspberry Pi 3B+ för att mäta ljudnivåer. Data skickas sedan till ThingSpeak, en molnplattform för IoT-data, där den kan analyseras och visualiseras.
+
+## Hårdvara
+- **Raspberry Pi 3B+**
+- **KY-037 Mikrofonmodul**
+- **Jumperkablar**
+
+## Programvara och Bibliotek
+- Raspberry Pi OS
+- Python 3
+- RPi.GPIO (för att hantera Raspberry Pi:s GPIO-pins)
+- Requests (för att skicka data till ThingSpeak)
+
+## Funktionalitet
+1. Raspberry Pi läser av signaler från KY-037 mikrofonmodulen.
+2. Ljudnivån loggas och bearbetas.
+3. Den genomsnittliga ljudnivån beräknas över 15 sekunder.
+4. Data skickas till ThingSpeak via ett HTTP GET-anrop.
+5. ThingSpeak lagrar och visualiserar data i realtid.
+
+## Systemarkitektur
+1. **Sensorinput**: KY-037 mäter ljudnivån och skickar signaler till Raspberry Pi.
+2. **Databehandling**: Raspberry Pi tolkar och lagrar signalerna till en lista.
+3. **Dataöverföring**: Den bearbetade ljudnivån skickas till ThingSpeak via API.
+4. **Visualisering**: ThingSpeak lagrar och visar data i grafer för analys.
+
+## Sammanfattning
+Detta projekt demonstrerar hur en Raspberry Pi 3B+ kan användas för att samla in sensordata och skicka den till en molntjänst för analys och visualisering. Systemet kan enkelt utökas med fler sensorer eller funktioner för mer avancerad IoT-användning.
+
