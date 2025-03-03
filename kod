@@ -1,0 +1,58 @@
+import RPi.GPIO as GPIO
+import time
+import requests
+ 
+# Inaktivera GPIO-varningar
+GPIO.setwarnings(False)
+ 
+# Använd BCM-läge (GPIO-nummer)
+GPIO.setmode(GPIO.BCM)
+ 
+# KY-037 Digital Out ansluten till GPIO4 (Pin 7)
+MIC_PIN = 4  
+ 
+# Ställ in MIC_PIN som en ingång
+GPIO.setup(MIC_PIN, GPIO.IN)
+ 
+# ThingSpeak API-inställningar
+THINGSPEAK_API_KEY = "DXBRVWQ8EXIR8730"  # Ersätt med din API-nyckel
+THINGSPEAK_URL = "https://api.thingspeak.com/update"
+ 
+# Lista för att lagra ljudnivåer
+sound_data = []
+ 
+print("Startar KY-037-läsning och skickar till ThingSpeak var 15:e sekund... Tryck Ctrl+C för att avsluta.")
+ 
+try:
+    while True:
+        # Läs ljudnivå från KY-037
+        sound_level = 1 if GPIO.input(MIC_PIN) == GPIO.HIGH else 0
+        sound_data.append(sound_level)
+ 
+        # Skriv ut live-data varje sekund
+        print(f"Ljudnivå: {sound_level} (uppdateras varje sekund)")
+ 
+        # Skicka data till ThingSpeak var 15:e sekund
+        if len(sound_data) >= 15:
+            avg_sound = sum(sound_data) / len(sound_data)  # Beräkna genomsnitt
+            sound_data.clear()  # Rensa listan efter att vi skickat data
+ 
+            # Skicka genomsnittlig ljudnivå till ThingSpeak
+            payload = {
+                "api_key": THINGSPEAK_API_KEY,
+                "field1": avg_sound
+            }
+            response = requests.get(THINGSPEAK_URL, params=payload)
+ 
+            if response.status_code == 200:
+                print(f"✅ Data skickad till ThingSpeak! Genomsnittlig ljudnivå: {avg_sound:.2f}")
+            else:
+                print(f"⚠️ Fel vid dataöverföring: {response.status_code}")
+ 
+        time.sleep(1)  # Vänta 1 sekund innan nästa mätning
+ 
+except KeyboardInterrupt:
+    print("\nAvslutar programmet.")
+    GPIO.cleanup()
+
+
